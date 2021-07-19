@@ -1,6 +1,7 @@
+bcrypt~=3.2
 beanie~=1.1
 fastapi~=0.64
 fastapi-jwt-auth~=0.5
-fastapi-mail~=0.3
+fastapi-mail~=0.4
 python-decouple~=3.4
 uvicorn~=0.13
