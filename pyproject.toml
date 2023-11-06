@@ -1,0 +1,53 @@
+[project]
+name="fastapi-beanie-jwt"
+version="0.1.0"
+description = "Sample FastAPI server with JWT auth and Beanie ODM"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "Michael duPont", email="michael@dupont.dev"}
+]
+dependencies = [
+    "bcrypt~=4.0",
+    "beanie~=1.23",
+    "fastapi~=0.104",
+    "fastapi-jwt>=0.2",
+    "fastapi-mail~=1.4",
+    "python-decouple~=3.8",
+    "uvicorn~=0.24",
+]
+
+[project.optional-dependencies]
+dev = ["mypy", "ruff"]
+test = [
+    "asgi-lifespan~=2.1",
+    "httpx~=0.25",
+    "pytest-asyncio~=0.21",
+]
+
+[project.urls]
+"Source" = "https://github.com/flyinactor91/fastapi-beanie-jwt"
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_unimported = false
+disallow_untyped_defs = true
+explicit_package_bases = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.ruff]
+extend-select = [
+    "UP",
+    "D",
+]
+ignore = [
+    "D105",
+    "D203",
+    "D213",
+]

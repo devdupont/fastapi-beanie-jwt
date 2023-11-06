@@ -1,25 +1,34 @@
-"""
-FastAPI JWT configuration
-"""
+"""FastAPI JWT configuration."""
 
-# pylint: disable=unused-argument
+from datetime import timedelta
 
-from fastapi import Request
-from fastapi.responses import JSONResponse
-from fastapi_jwt_auth import AuthJWT
-from fastapi_jwt_auth.exceptions import AuthJWTException
+from fastapi_jwt import JwtAuthorizationCredentials, JwtAccessBearer, JwtRefreshBearer
 
-from myserver.app import app
 from myserver.config import CONFIG
+from myserver.models.user import User
+
+ACCESS_EXPIRES = timedelta(minutes=15)
+REFRESH_EXPIRES = timedelta(days=30)
+
+access_security = JwtAccessBearer(
+    CONFIG.authjwt_secret_key,
+    access_expires_delta=ACCESS_EXPIRES,
+    refresh_expires_delta=REFRESH_EXPIRES,
+)
+
+refresh_security = JwtRefreshBearer(
+    CONFIG.authjwt_secret_key,
+    access_expires_delta=ACCESS_EXPIRES,
+    refresh_expires_delta=REFRESH_EXPIRES,
+)
 
 
-@AuthJWT.load_config
-def get_config():
-    """Load AuthJWT settings"""
-    return CONFIG
+async def user_from_credentials(auth: JwtAuthorizationCredentials) -> User | None:
+    """Return the user associated with auth credentials."""
+    return await User.by_email(auth.subject["username"])
 
 
-@app.exception_handler(AuthJWTException)
-def jwt_exception_handler(request: Request, exc: AuthJWTException):
-    """Returns any authentication failures"""
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+async def user_from_token(token: str) -> User | None:
+    """Return the user associated with a token value."""
+    payload = access_security._decode(token)
+    return await User.by_email(payload["subject"]["username"])

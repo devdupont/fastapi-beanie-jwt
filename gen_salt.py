@@ -1,6 +1,4 @@
-"""
-This script generates a new bcrypt password salt and updates to local .env file
-"""
+"""Generate a new bcrypt password salt and updates to local .env file."""
 
 from pathlib import Path
 import bcrypt

@@ -1,10 +1,5 @@
-"""
-Server main runtime
-"""
+"""Server main runtime."""
 
-# pylint: disable=unused-import
-
-from myserver import jwt
 from myserver.app import app
 from myserver.routes.auth import router as AuthRouter
 from myserver.routes.mail import router as MailRouter

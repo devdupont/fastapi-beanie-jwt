@@ -1,8 +1,6 @@
-"""
-Mail server config
-"""
+"""Mail server config."""
 
-from fastapi_mail import FastMail, ConnectionConfig, MessageSchema
+from fastapi_mail import FastMail, ConnectionConfig, MessageSchema, MessageType
 
 from myserver.config import CONFIG
 
@@ -12,16 +10,16 @@ mail_conf = ConnectionConfig(
     MAIL_FROM=CONFIG.mail_sender,
     MAIL_PORT=CONFIG.mail_port,
     MAIL_SERVER=CONFIG.mail_server,
-    MAIL_TLS=True,
-    MAIL_SSL=False,
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=True,
     USE_CREDENTIALS=True,
 )
 
 mail = FastMail(mail_conf)
 
 
-async def send_verification_email(email: str, token: str):
-    """Send user verification email"""
+async def send_verification_email(email: str, token: str) -> None:
+    """Send user verification email."""
     # Change this later to public endpoint
     url = CONFIG.root_url + "/mail/verify/" + token
     if CONFIG.mail_console:
@@ -30,14 +28,14 @@ async def send_verification_email(email: str, token: str):
         message = MessageSchema(
             recipients=[email],
             subject="MyServer Email Verification",
-            body="Welcome to MyServer! We just need to verify your email to begin: "
-            + url,
+            body=f"Welcome to MyServer! We just need to verify your email to begin: {url}",
+            subtype=MessageType.plain,
         )
         await mail.send_message(message)
 
 
-async def send_password_reset_email(email: str, token: str):
-    """Sends password reset email"""
+async def send_password_reset_email(email: str, token: str) -> None:
+    """Send password reset email."""
     # Change this later to public endpoint
     url = CONFIG.root_url + "/register/reset-password/" + token
     if CONFIG.mail_console:
@@ -47,5 +45,6 @@ async def send_password_reset_email(email: str, token: str):
             recipients=[email],
             subject="MyServer Password Reset",
             body=f"Click the link to reset your MyServer account password: {url}\nIf you did not request this, please ignore this email",
+            subtype=MessageType.plain,
         )
         await mail.send_message(message)

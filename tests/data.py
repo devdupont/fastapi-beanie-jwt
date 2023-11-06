@@ -1,18 +1,26 @@
-"""
-Test data handlers
-"""
+"""Test data handlers."""
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, UTC
 
 from myserver.models.user import User
 from myserver.util.password import hash_password
 
 
-async def add_empty_user() -> None:
-    """Adds test users to user collection"""
-    empty_user = User(
-        email="empty@test.io",
-        password=hash_password("empty@test.io"),
-        email_confirmed_at=datetime.now(tz=timezone.utc),
+def make_user(email: str, offset: int | None = 0) -> User:
+    """Return a minimal, uncommitted User."""
+    now = None
+    if offset is not None:
+        now = datetime.now(tz=UTC) - timedelta(days=offset)
+    user = User(
+        email=email,
+        password=hash_password(email),
+        email_confirmed_at=now,
     )
-    await empty_user.create()
+    return user
+
+
+async def add_empty_user() -> str:
+    """Add minimal user to user collection."""
+    user = make_user("empty@test.io")
+    await user.create()
+    return user.email
